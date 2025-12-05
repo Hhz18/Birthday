@@ -1,5 +1,6 @@
 package com.example.birthday.dto;
 
+import com.example.birthday.entity.Friend;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +20,5 @@ public class ReminderDTO {
     private String type;
     private String message;
     private Boolean sent;
+    private Friend friend; // 关联的好友实体
 }

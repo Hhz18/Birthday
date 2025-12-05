@@ -17,7 +17,10 @@ public interface ReminderService {
 
     List<ReminderDTO> getRemindersByFriend(String friendId);  // UUID 改为 String
 
-    List<ReminderDTO> getPendingReminders(LocalDateTime now);
+    List<ReminderDTO> getPendingReminders(LocalDateTime now); // 新增：获取当前时间之前未发送的提醒
     
     ReminderDTO markAsSent(UUID id);  // 新增：标记为已发送
+
+//    //TODO: 实现发送邮件和短信的方法
+//    void sendBirthdayReminderEmail(String userEmail, String friendName, String message);
 }

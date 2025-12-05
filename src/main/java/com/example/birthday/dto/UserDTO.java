@@ -10,4 +10,5 @@ public class UserDTO {
     private String email;
     private String password;
     private String username;
+    private String phoneNumber; // 用户手机号，用于短信提醒
 }

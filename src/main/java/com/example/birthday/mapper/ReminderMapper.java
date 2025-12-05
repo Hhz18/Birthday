@@ -14,6 +14,7 @@ public interface ReminderMapper {
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     @Mapping(source = "friend.id", target = "friendId", qualifiedByName = "uuidToString")
     @Mapping(source = "userId", target = "userId", qualifiedByName = "uuidToString")
+    @Mapping(source = "friend", target = "friend")
     ReminderDTO toDTO(Reminder reminder);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUuid")

@@ -6,6 +6,7 @@ import com.example.birthday.entity.Reminder;
 import com.example.birthday.mapper.ReminderMapper;
 import com.example.birthday.repository.FriendRepository;
 import com.example.birthday.repository.ReminderRepository;
+import com.example.birthday.service.EmailService;
 import com.example.birthday.service.ReminderService;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,9 @@ public class ReminderServiceImpl implements ReminderService {
     private final FriendRepository friendRepository;
     private final ReminderMapper reminderMapper;
 
-    public ReminderServiceImpl(ReminderRepository reminderRepository, FriendRepository friendRepository, ReminderMapper reminderMapper) {
+
+    public ReminderServiceImpl(ReminderRepository reminderRepository, FriendRepository friendRepository, 
+                              ReminderMapper reminderMapper, EmailService emailService) {
         this.reminderRepository = reminderRepository;
         this.friendRepository = friendRepository;
         this.reminderMapper = reminderMapper;

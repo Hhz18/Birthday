@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Autowired
-    UserService userService;
+    
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     /**
@@ -46,12 +50,12 @@ public class AuthController {
     public ApiResponse<UserDTO> login(@RequestBody UserDTO userDTO) {
         try {
             UserDTO user = userService.findByEmail(userDTO.getEmail());
-//            if (user == null) {
-//                return ApiResponse.error(404, "用户不存在或密码错误");
-//            }
+            if (user == null) {
+                return ApiResponse.error(404, "用户不存在或密码错误");
+            }
             
             // 验证密码
-            if (!userService.validatePassword(user.getEmail(), userDTO.getPassword())) {
+            if (!userService.validatePassword(userDTO.getEmail(), userDTO.getPassword())) {
                 return ApiResponse.error(401, "用户不存在或密码错误");
             }
 

@@ -27,4 +27,7 @@ public class User {
 
     @Column(name = "user_name")
     private String username;
+    
+    @Column(name = "phone_number")
+    private String phoneNumber; // 用户手机号，用于短信提醒
 }

@@ -5,6 +5,7 @@ import com.example.birthday.entity.User;
 import com.example.birthday.mapper.UserMapper;
 import com.example.birthday.repository.UserRepository;
 import com.example.birthday.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -15,6 +16,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;

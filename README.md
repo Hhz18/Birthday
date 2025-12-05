@@ -38,6 +38,16 @@ Birthday 是一个基于 Spring Boot 的生日提醒管理系统，帮助用户�
 │  DTO：给 Controller/前端使用的模型 │
 │  Mapper：转换（MapStruct）         │
 └──────────────────────────────────┘
+│ 调用
+┌──────────────┴──────────────────┐
+│            Scheduler            │
+│      定时任务扫描和发送提醒        │
+└──────────────▲──────────────────┘
+│ 调用
+┌──────────────┴──────────────────┐
+│            Util                 │
+│      工具类（邮件模板等）          │
+└──────────────────────────────────┘
 
 本项目采用经典的三层架构模式，各层职责清晰：
 
@@ -49,6 +59,7 @@ com.example.birthday
 ├── mapper/          # 对象映射层 - Entity与DTO转换
 ├── service/         # 业务逻辑层 - 核心业务处理
 ├── controller/      # 控制器层 - 接口暴露
+├── scheduler/       # 定时任务层 - 定时扫描和发送提醒
 ├── config/          # 配置层 - 系统配置
 └── util/            # 工具类层 - 通用工具
 ```
@@ -64,6 +75,7 @@ com.example.birthday
   - `email`: 邮箱，唯一且非空
   - `passwordHash`: 密码哈希值
   - `createdAt`: 创建时间
+  - `phoneNumber`: 手机号码，用于短信提醒
 
 #### Friend (好友表)
 - **表名**: `friends`
@@ -192,6 +204,16 @@ DTO（Data Transfer Object）用于前后端数据传输，与 Entity 相比更�
 - 使用 Mapper 进行对象转换
 - 实现复杂的业务逻辑
 - 事务管理
+- 调用邮件/短信服务发送提醒
+
+### 5.1 Scheduler 层（定时任务层）
+
+负责定时扫描和发送提醒，通过定时任务机制实现自动化的生日提醒功能。
+
+**职责**:
+- 定时检查待发送的提醒
+- 根据提醒类型发送邮件或短信
+- 更新提醒状态
 
 ### 6. Controller 层（控制器层）
 
@@ -209,6 +231,11 @@ DTO（Data Transfer Object）用于前后端数据传输，与 Entity 相比更�
 Client → Controller → Service → Repository → Database
    ↓         ↓          ↓           ↓
   DTO    ←  Mapper  ←  Entity  ←  持久化数据
+             ↑
+             |
+        Scheduler
+             |
+         Util/Email
 ```
 
 **请求流程**:
@@ -256,6 +283,8 @@ Spring Data JPA 支持通过方法名自动生成查询：
 - Reminder Entity 记录提醒日志
 - ReminderRepository 查询待发送提醒
 - 定时任务扫描并发送提醒
+- 支持邮件和短信两种提醒方式
+- 根据用户设置自动选择提醒方式
 
 ## 项目特点
 
@@ -293,7 +322,7 @@ Page<Friend> findByUserId(UUID userId, Pageable pageable);
 ```bash
 # 编译项目
 mvn clean install
-
+  
 # 运行项目
 mvn spring-boot:run
 ```
@@ -301,7 +330,7 @@ mvn spring-boot:run
 ## 未来规划
 
 - [ ] 完善 UserRepository 和 FriendRepository 的查询方法
-- [ ] 实现定时任务扫描和发送提醒
-- [ ] 添加邮件/短信提醒功能
+- [x] 实现定时任务扫描和发送提醒
+- [x] 添加邮件/短信提醒功能
 - [ ] 实现 RESTful API
 - [ ] 添加单元测试和集成测试

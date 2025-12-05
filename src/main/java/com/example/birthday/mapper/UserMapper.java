@@ -15,12 +15,14 @@ public interface UserMapper {
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     @Mapping(source = "passwordHash", target = "password")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
     UserDTO toDTO(User user);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUuid")
     @Mapping(source = "password", target = "passwordHash")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
     User toEntity(UserDTO userDTO);
 
     @Named("uuidToString")
