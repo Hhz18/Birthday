@@ -17,52 +17,50 @@ Birthday 是一个基于 Spring Boot 的生日提醒管理系统，帮助用户�
 
 ## 项目层次结构
 
-┌─────────────────────────────────┐
-│           Controller            │
-│   接收请求、返回数据给前端        │
-└──────────────▲──────────────────┘
-│ 调用
-┌──────────────┴──────────────────┐
-│             Service              │
-│  业务逻辑、校验、定时任务、流程控制 │
-└──────────────▲──────────────────┘
-│ 调用
-┌──────────────┴──────────────────┐
-│            Repository            │
-│   只负责数据库操作（增删改查）       │
-└──────────────▲──────────────────┘
-│ 读取/写入
-┌──────────────┴──────────────────┐
-│   Entity ←→ Mapper ←→ DTO       │
-│  Entity：数据库模型                │
-│  DTO：给 Controller/前端使用的模型 │
-│  Mapper：转换（MapStruct）         │
-└──────────────────────────────────┘
-│ 调用
-┌──────────────┴──────────────────┐
-│            Scheduler            │
-│      定时任务扫描和发送提醒        │
-└──────────────▲──────────────────┘
-│ 调用
-┌──────────────┴──────────────────┐
-│            Util                 │
-│      工具类（邮件模板等）          │
-└──────────────────────────────────┘
-
-本项目采用经典的三层架构模式，各层职责清晰：
-
 ```
 com.example.birthday
-├── entity/          # 实体层 - 数据库映射
-├── repository/      # 数据访问层 - 数据库操作
-├── dto/             # 数据传输对象层 - 前后端交互
-├── mapper/          # 对象映射层 - Entity与DTO转换
-├── service/         # 业务逻辑层 - 核心业务处理
-├── controller/      # 控制器层 - 接口暴露
-├── scheduler/       # 定时任务层 - 定时扫描和发送提醒
-├── config/          # 配置层 - 系统配置
-└── util/            # 工具类层 - 通用工具
+├── BirthdayApplication.java  # Spring Boot 启动类
+├── common/                  # 公共模块
+│   └── ApiResponse.java     # 统一响应结果封装
+├── config/                  # 配置层 - 系统配置
+│   └── SecurityConfig.java  # Spring Security 安全配置
+├── controller/              # 控制器层 - REST API 接口
+│   ├── AuthController.java      # 认证相关接口（注册、登录、用户信息管理等）
+│   ├── FriendController.java    # 好友管理接口
+│   └── ReminderController.java  # 提醒记录接口
+├── dto/                     # 数据传输对象层 - 前后端交互
+│   ├── FriendDTO.java    # 好友信息传输对象
+│   ├── ReminderDTO.java  # 提醒记录传输对象
+│   └── UserDTO.java      # 用户信息传输对象
+├── entity/                  # 实体层 - 数据库映射
+│   ├── Friend.java     # 好友实体类
+│   ├── Reminder.java   # 提醒记录实体类
+│   └── User.java       # 用户实体类
+├── mapper/                  # 对象映射层 - Entity与DTO转换
+│   ├── FriendMapper.java    # Friend实体与DTO转换接口
+│   ├── ReminderMapper.java  # Reminder实体与DTO转换接口
+│   └── UserMapper.java      # User实体与DTO转换接口
+├── repository/              # 数据访问层 - 数据库操作
+│   ├── FriendRepository.java    # Friend实体数据访问接口
+│   ├── ReminderRepository.java  # Reminder实体数据访问接口
+│   └── UserRepository.java      # User实体数据访问接口
+├── scheduler/               # 定时任务层 - 定时扫描和发送提醒
+│   └── BirthdayReminderScheduler.java  # 生日提醒定时任务
+├── service/                 # 业务逻辑层 - 核心业务处理
+│   ├── EmailService.java         # 邮件发送服务接口
+│   ├── FriendService.java        # 好友管理服务接口
+│   ├── ReminderService.java      # 提醒服务接口
+│   ├── UserService.java          # 用户服务接口
+│   └── impl/                     # 服务接口实现类
+│       ├── EmailServiceImpl.java     # 邮件发送服务实现
+│       ├── FriendServiceImpl.java    # 好友管理服务实现
+│       ├── ReminderServiceImpl.java  # 提醒服务实现
+│       └── UserServiceImpl.java      # 用户服务实现
+└── util/                   # 工具类层 - 通用工具
+   └── EmailTemplateUtil.java  # 邮件模板工具类
 ```
+
+本项目采用经典的三层架构模式，各层职责清晰：
 
 ### 1. Entity 层（实体层）
 
@@ -75,6 +73,7 @@ com.example.birthday
   - `email`: 邮箱，唯一且非空
   - `passwordHash`: 密码哈希值
   - `createdAt`: 创建时间
+  - `username`: 用户昵称
   - `phoneNumber`: 手机号码，用于短信提醒
 
 #### Friend (好友表)
@@ -274,12 +273,16 @@ Spring Data JPA 支持通过方法名自动生成查询：
 - UserRepository 提供用户数据访问
 - Spring Security 提供认证授权
 
-### 2. 好友管理
+### 2. 用户信息管理
+- 用户可以查看自己的基本信息
+- 用户可以更新个人资料（昵称、手机号等）
+
+### 3. 好友管理
 - Friend Entity 存储好友信息
 - FriendRepository 提供好友数据操作
 - 支持添加、编辑、删除好友
 
-### 3. 生日提醒
+### 4. 生日提醒
 - Reminder Entity 记录提醒日志
 - ReminderRepository 查询待发送提醒
 - 定时任务扫描并发送提醒
@@ -332,5 +335,5 @@ mvn spring-boot:run
 - [ ] 完善 UserRepository 和 FriendRepository 的查询方法
 - [x] 实现定时任务扫描和发送提醒
 - [x] 添加邮件/短信提醒功能
-- [ ] 实现 RESTful API
+- [x] 实现 RESTful API
 - [ ] 添加单元测试和集成测试

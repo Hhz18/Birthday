@@ -37,6 +37,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO updateUser(UUID id, UserDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // 更新用户信息，但不更新邮箱和密码
+        user.setUsername(userDTO.getUsername());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDTO(updatedUser);
+    }
+
+    @Override
     public UserDTO findByEmail(String email) {
         User user = userRepository.findByEmail(email);
         return user == null ? null : userMapper.toDTO(user);

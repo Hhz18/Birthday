@@ -3,8 +3,9 @@ package com.example.birthday.controller;
 import com.example.birthday.common.ApiResponse;
 import com.example.birthday.dto.UserDTO;
 import com.example.birthday.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 /**
  * 认证模块 Controller
@@ -63,6 +64,51 @@ public class AuthController {
             return ApiResponse.success("登录成功", user);
         } catch (Exception e) {
             return ApiResponse.error(500, "登录失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 用户退出登录
+     * POST /auth/logout
+     */
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout() {
+        // 在实际应用中，这里需要从token存储中移除用户的token
+        // 由于目前没有实现完整的JWT token机制，这里只是简单返回成功
+        return ApiResponse.success("退出登录成功", null);
+    }
+
+    /**
+     * 查看用户信息
+     * GET /auth/user/{id}
+     */
+    @GetMapping("/user/{id}")
+    public ApiResponse<UserDTO> getUserInfo(@PathVariable UUID id) {
+        try {
+            UserDTO user = userService.getUser(id);
+            return ApiResponse.success("查询成功", user);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("not found")) {
+                return ApiResponse.error(404, "用户不存在");
+            }
+            return ApiResponse.error(500, "查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新用户信息
+     * PUT /auth/user/{id}
+     */
+    @PutMapping("/user/{id}")
+    public ApiResponse<UserDTO> updateUserInfo(@PathVariable UUID id, @RequestBody UserDTO userDTO) {
+        try {
+            UserDTO updated = userService.updateUser(id, userDTO);
+            return ApiResponse.success("更新成功", updated);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("not found")) {
+                return ApiResponse.error(404, "用户不存在");
+            }
+            return ApiResponse.error(500, "更新失败: " + e.getMessage());
         }
     }
 }

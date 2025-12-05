@@ -127,6 +127,123 @@
 
 ---
 
+### 1.3 查看用户信息
+
+**GET** `/auth/user/{id}`
+
+#### 路径参数
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| id | String(UUID) | 用户 ID |
+
+#### 请求示例
+```
+GET /auth/user/550e8400-e29b-41d4-a716-446655440000
+```
+
+#### 成功响应
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "email": "tom@example.com",
+    "username": "Tom",
+    "phoneNumber": "13800138000"
+  }
+}
+```
+
+#### 错误响应
+```json
+{
+  "code": 404,
+  "message": "用户不存在",
+  "data": null
+}
+```
+
+---
+
+### 1.4 更新用户信息
+
+**PUT** `/auth/user/{id}`
+
+#### 路径参数
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| id | String(UUID) | 用户 ID |
+
+#### 请求头
+```
+Authorization: Bearer {token}
+```
+
+#### 请求体
+```json
+{
+  "username": "Tom Smith",
+  "phoneNumber": "13900139000"
+}
+```
+
+#### 请求参数说明
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| username | String | 否 | 用户昵称 |
+| phoneNumber | String | 否 | 手机号码 |
+
+#### 成功响应
+```json
+{
+  "code": 200,
+  "message": "更新成功",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "email": "tom@example.com",
+    "username": "Tom Smith",
+    "phoneNumber": "13900139000"
+  }
+}
+```
+
+#### 错误响应
+```json
+{
+  "code": 404,
+  "message": "用户不存在",
+  "data": null
+}
+```
+
+---
+
+### 1.5 用户退出登录
+
+**POST** `/auth/logout`
+
+#### 请求头
+```
+Authorization: Bearer {token}
+```
+
+#### 请求示例
+```
+POST /auth/logout
+```
+
+#### 成功响应
+```json
+{
+  "code": 200,
+  "message": "退出登录成功",
+  "data": null
+}
+```
+
+---
+
 ## 二、好友管理模块 `/friend`
 
 ### 实体字段说明
